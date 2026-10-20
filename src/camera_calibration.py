@@ -60,24 +60,24 @@ def collect_calibration_points():
 
         current_size = (image.shape[1], image.shape[0])
 
+        corners = detect_chessboard_corners(image)
+
+        if corners is None:
+            print(f"{path.name}: corners not detected")
+            continue
+
         if image_size is None:
             image_size = current_size
         elif current_size != image_size:
             print(f"Skipping {path.name}: different image size")
             continue
 
-        corners = detect_chessboard_corners(image)
+        all_object_points.append(object_points.copy())
+        all_image_points.append(corners)
 
-        if corners is not None:
-            all_object_points.append(object_points.copy())
-            all_image_points.append(corners)
-
-            print(f"{path.name}: {len(corners)} corners detected")
-        else:
-            print(f"{path.name}: corners not detected")
+        print(f"{path.name}: {len(corners)} corners detected")
 
     return all_object_points, all_image_points, image_size
-
 
 
 def main():
