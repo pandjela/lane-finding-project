@@ -2,25 +2,25 @@ import cv2
 import numpy as np
 from pathlib import Path
 
-# Putanja do glavnog foldera projekta
+# Path to the project root directory
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 
-# Dimenzije sahovske table (broj unutrasnjih uglova)
+# Chessboard dimensions (number of internal corners)
 CHESSBOARD_SIZE = (9, 6)
 
 def detect_chessboard_corners(image):
 
-    #pretvaranje slike u grayscale
+    # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    #pronalazenje unutrasnjih uglova sahovske table
+    # Detect the internal corners of the chessboard
     found, corners = cv2.findChessboardCorners(
          gray, CHESSBOARD_SIZE, None)
      
     if not found:
         return None
 
-    #preciznije odredjivanje kordinata uglova
+    # Refine corner coordinates for greater accuracy
     criteria = (
         cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001
         )
@@ -39,7 +39,7 @@ def collect_calibration_points():
         (PROJECT_DIR / "camera_cal").glob("calibration*.jpg")
     )
 
-    # Poznate 3D koordinate uglova sahovske table
+    #  Define the known 3D coordinates of chessboard corners
     cols, rows = CHESSBOARD_SIZE
 
     object_points = np.zeros((rows * cols, 3), dtype=np.float32)
@@ -60,6 +60,7 @@ def collect_calibration_points():
 
         current_size = (image.shape[1], image.shape[0])
 
+        # Detect chessboard corners in the current image
         corners = detect_chessboard_corners(image)
 
         if corners is None:
@@ -72,6 +73,7 @@ def collect_calibration_points():
             print(f"Skipping {path.name}: different image size")
             continue
 
+        # Store corresponding 3D object points and 2D image points
         all_object_points.append(object_points.copy())
         all_image_points.append(corners)
 
@@ -82,7 +84,7 @@ def collect_calibration_points():
 
 def main():
 
-    # Prikupljanje 3D i 2D koordinata uglova sahovske table
+    # Collect 3D object points and 2D image points
     object_points, image_points, image_size = collect_calibration_points()
 
     print("\nCalibration images successfully processed:", len(image_points))
@@ -93,7 +95,7 @@ def main():
         print("Not enough images for camera calibration.")
         return
 
-    # Racunanje parametara kamere
+    # Calculate the camera matrix and distortion coefficients
     rms, camera_matrix, dist_coeffs, rvecs, tvecs = cv2.calibrateCamera(
         object_points,
         image_points,
@@ -110,7 +112,20 @@ def main():
     print("\nDistortion coefficients:")
     print(dist_coeffs)
 
-     # Ucitavanje fotografije za provjeru kalibracije
+    # Save the calibration parameters for later use
+    calibration_path = PROJECT_DIR / "camera_cal" / "calibration_data.npz"
+
+    np.savez(
+        calibration_path,
+        camera_matrix=camera_matrix,
+        dist_coeffs=dist_coeffs,
+        image_size=np.array(image_size),
+        rms=rms
+    )
+
+    print("\nCalibration parameters saved to:", calibration_path)
+
+    # Load a calibration image to verify distortion correction
     image_path = PROJECT_DIR / "camera_cal" / "calibration3.jpg"
     image = cv2.imread(str(image_path))
 
@@ -118,7 +133,7 @@ def main():
         print("Could not load image for undistortion.")
         return
 
-    # Ispravljanje distorzije
+    # Correct lens distortion using the calibration parameters
     undistorted_image = cv2.undistort(
         image,
         camera_matrix,
@@ -127,7 +142,7 @@ def main():
         camera_matrix
     )
 
-    # Cuvanje ispravljene fotografije
+    # Save the  undistorted calibration image
     output_path = PROJECT_DIR / "output_images" / "undistorted_calibration3.jpg"
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
