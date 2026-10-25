@@ -111,7 +111,7 @@ def sliding_window_search(binary_warped):
     rightx = nonzerox[right_lane_inds]
     righty = nonzeroy[right_lane_inds]
 
-     # Check whether enough pixels were detected for polynomial fitting
+    # Check whether enough pixels were detected for polynomial fitting
     if len(leftx) < 3 or len(rightx) < 3:
         raise ValueError("Not enough pixels for polynomial fitting.")
 
@@ -129,14 +129,13 @@ def sliding_window_search(binary_warped):
     # Create points for drawing the polynomial curves
     left_points = np.column_stack((left_fitx, ploty)).astype(np.int32)
     right_points = np.column_stack((right_fitx, ploty)).astype(np.int32)
-
+    
     # Draw the fitted polynomial curves in yellow
     cv2.polylines(out_img, [left_points], False, (0, 255, 255), 4)
     cv2.polylines(out_img, [right_points], False, (0, 255, 255), 4)
 
     print("Left polynomial coefficients:", left_fit)
     print("Right polynomial coefficients:", right_fit)
-
 
     return out_img, nonzerox, nonzeroy, left_lane_inds, right_lane_inds, left_fit, right_fit
 
@@ -239,7 +238,7 @@ def calculate_vehicle_position(left_fit, right_fit, image_width,
 
 def main():
 
-    image_path = PROJECT_DIR / "output_images" / "warped_test1.png"
+    image_path = PROJECT_DIR / "output_images" / "warped_straight_lines2.png"
     image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
 
     if image is None:
@@ -258,7 +257,7 @@ def main():
     rightx = nonzerox[right_inds]
     righty = nonzeroy[right_inds]
 
-     # Get image dimensions
+    # Get image dimensions
     height, width = image.shape
 
     # Define approximate pixel-to-meter conversion factors
@@ -297,7 +296,7 @@ def main():
     
     
     cv2.imwrite(    
-    str(PROJECT_DIR / "output_images" / "curvature_test1.png"),
+    str(PROJECT_DIR / "output_images" / "polynomial2_straight_lines2.png"),
     out_img)
     
 
