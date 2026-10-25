@@ -96,8 +96,8 @@ def main():
         src = np.float32([
             [585 * scale_x, 450 * scale_y],    # top-left
             [710 * scale_x, 450 * scale_y],    # top-right
-            [1085 * scale_x, (height - 1)],    # bottom-right
-            [230 * scale_x, (height - 1)]      # bottom-left
+            [1110 * scale_x, (height - 1)],    # bottom-right
+            [240 * scale_x, (height - 1)]      # bottom-left
         ])
 
         # Define a trapezoidal region of interest around the road
