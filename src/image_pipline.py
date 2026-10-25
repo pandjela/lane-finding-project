@@ -222,6 +222,46 @@ def main():
             cv2.LINE_AA
         )
 
+        
+        # Format the polynomial equations
+        left_equation = (
+            f"Left polynomial: x(y) = {left_fit[0]:.2e}y^2 "
+            f"{left_fit[1]:+.2e}y "
+            f"{left_fit[2]:+.1f}"
+        )
+
+        right_equation = (
+            f"Right polynomial: x(y) = {right_fit[0]:.2e}y^2 "
+            f"{right_fit[1]:+.2e}y "
+            f"{right_fit[2]:+.1f}"
+        )
+
+        # Display the left polynomial equation
+        cv2.putText(
+            final_image,
+            left_equation,
+            (50, 135),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.55,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA
+        )
+
+        # Display the right polynomial equation
+        cv2.putText(
+            final_image,
+            right_equation,
+            (50, 170),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.55,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA
+        )
+
+        
+
         # Save the final lane detection result
         cv2.imwrite(
             str(output_dir / f"final_{image_path.stem}.png"),
