@@ -1,4 +1,3 @@
-
 import cv2
 import numpy as np
 from pathlib import Path
@@ -8,10 +7,10 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 def gradient_threshold(image, min_threshold=25, max_threshold=120, kernel_size=3):
 
-    # Pretvaranje slike u grayscale
+    # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Sobel operator u X smjeru
+    # Apply the Sobel operator in the X direction
     sobel_x = cv2.Sobel(
         gray,
         cv2.CV_64F,
@@ -20,10 +19,10 @@ def gradient_threshold(image, min_threshold=25, max_threshold=120, kernel_size=3
         ksize=kernel_size
     )
 
-    # Apsolutna vrijednost gradijenta
+    # Calculate the absolute gradient values
     abs_sobel_x = np.abs(sobel_x)
 
-    # Skaliranje vrijednosti na opseg 0-255
+    # Scale the gradient values to the range 0-255
     max_gradient = np.max(abs_sobel_x)
 
     if max_gradient == 0:
@@ -33,7 +32,7 @@ def gradient_threshold(image, min_threshold=25, max_threshold=120, kernel_size=3
         255 * abs_sobel_x / max_gradient
     )
 
-    # Kreiranje binarne slike
+    # Create a binary image using gradient thresholds
     binary = np.zeros_like(scaled_sobel)
 
     binary[

@@ -1,23 +1,23 @@
-
 import cv2
 import numpy as np
 
 
 def perspective_transform(image, src, dst):
-    
+
+    # Convert source and destination points to float32
     src = np.float32(src)
     dst = np.float32(dst)
 
-    # Matrica perspektivne transformacije
+    # Calculate the perspective transformation matrix
     M = cv2.getPerspectiveTransform(src, dst)
 
-    # Inverzna matrica za kasnije vracanje na originalnu sliku
+    # Calculate the inverse matrix to restore the original perspective
     Minv = cv2.getPerspectiveTransform(dst, src)
 
-    # Dimenzije slike
+    # Get image dimensions
     height, width = image.shape[:2]
 
-    # Transformacija slike
+    # Apply the perspective transformation
     warped = cv2.warpPerspective(
         image,
         M,

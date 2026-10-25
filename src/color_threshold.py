@@ -1,4 +1,3 @@
-
 import cv2
 import numpy as np
 from pathlib import Path
@@ -7,21 +6,21 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 
 def color_threshold(image):
-    # Pretvaranje slike iz BGR u HLS prostor boja
+    # Convert the image from BGR to HLS color space
     hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
 
-    # Granice za bijele linije
+    # Define thresholds for white lane markings
     lower_white = np.array([0, 200, 0])
     upper_white = np.array([180, 255, 255])
 
-    # Granice za zute linije
+    # Define thresholds for yellow lane markings
     lower_yellow = np.array([15, 30, 100])
     upper_yellow = np.array([35, 204, 255])
 
     white_mask = cv2.inRange(hls, lower_white, upper_white)
     yellow_mask = cv2.inRange(hls, lower_yellow, upper_yellow)
 
-    # Kombinovanje dvije maske
+    # Combine the two masks
     combined_mask = cv2.bitwise_or(white_mask, yellow_mask)
 
     return combined_mask
